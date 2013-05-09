@@ -164,7 +164,7 @@ global.loadCommand = function(callback)
 		}
 		console.log('mongo db connected');
 		db.collection('commandSchema', {'safe': true}, function (err, coll){
-			coll.find().toArray(
+			coll.find({'chain': {$gte: 0}}).sort({'chain': 1}).toArray(
 				function(err, docs){
 					for (var i in docs)
 					{
