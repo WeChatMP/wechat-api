@@ -17,10 +17,12 @@ module.exports.push = function(req, res)
 		}
 		return;
 	}
+	req._accept = 'xml';
 	
 	var data;
 	var user = {'openid': req.apibody['xml']['FromUserName'][0]};
 	var msgType = req.apibody['xml']['MsgType'][0];
+	var startTime = new Date();
 	
 	global.hitCount ++;
 	switch (msgType)
@@ -34,11 +36,11 @@ module.exports.push = function(req, res)
 					var replyMsg = global.formatMsg(reply, msgParam);
 					if (data && data.command)
 					{
-						global.logMsg(user, req.apibody['xml']['Content'][0], {'key': data.command.key, 'params': data.param, 'reply': reply, 'msgParam': msgParam, 'replyMsg': replyMsg});
+						global.logMsg(user, req.apibody['xml']['Content'][0], {'key': data.command.key, 'params': data.param, 'reply': reply, 'msgParam': msgParam, 'replyMsg': replyMsg, 'startTime': startTime, 'endTime': new Date()});
 					}
 					else
 					{
-						global.logMsg(user, req.apibody['xml']['Content'][0], {'reply': reply, 'msgParam': msgParam, 'replyMsg': replyMsg});
+						global.logMsg(user, req.apibody['xml']['Content'][0], {'reply': reply, 'msgParam': msgParam, 'replyMsg': replyMsg, 'startTime': startTime, 'endTime': new Date()});
 					}
 					try
 					{

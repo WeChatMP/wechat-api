@@ -3,6 +3,7 @@ module.exports.rrestconfig = require('./config/config');
 
 global.uptime = new Date();
 global.msgDefs = {};
+global.purgeProc = {};
 global.userData = {};
 global.cmdDefs = [];
 global.server = {};

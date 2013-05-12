@@ -20,6 +20,13 @@ module.exports.signal = function(req, res)
 	{
 		global.loadMsg();
 	}
+	else if (sig == 'purge')
+	{
+		for (var i in global.purgeProc)
+		{
+			global.purgeProc[i].purge();
+		}
+	}
 	
 	res.api({'success': 1});
 }

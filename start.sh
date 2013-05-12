@@ -1,1 +1,1 @@
-node app.js
+node app.js > debug.log &
