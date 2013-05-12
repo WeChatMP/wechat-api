@@ -116,7 +116,18 @@ global.processMsg = function(userid, msg, setdata, callback)
 	{
 		data.userid = userid;
 		data.user = global.getUserData(userid);
-		data.command.handle(data, callback);
+		data.finished = false;
+		data.timer = setTimeout(function(){
+			if (data.finished) return;
+			data.finished = true;
+			callback('timeout');
+		}, 1500);
+		data.command.handle(data, function(reply, msgParam){
+			if (data.finished) return;
+			clearTimeout(data.finished);
+			data.finished = true;
+			callback(reply, msgParam);
+		});
 	}
 	catch (e)
 	{

@@ -40,28 +40,34 @@ module.exports.push = function(req, res)
 					{
 						global.logMsg(user, req.apibody['xml']['Content'][0], {'reply': reply, 'msgParam': msgParam, 'replyMsg': replyMsg});
 					}
-					if (reply == 'news')
+					try
 					{
-						res.api({
-							'ToUserName': req.apibody['xml']['FromUserName'][0],
-							'FromUserName': req.apibody['xml']['ToUserName'][0],
-							'CreateTime': req.apibody['xml']['CreateTime'][0],
-							'MsgType': 'news',
-							'ArticleCount': msgParam.items.length,
-							'Articles': {'item': msgParam.items},
-							'FuncFlag': 1
-						});
+						if (reply == 'news')
+						{
+							res.api({
+								'ToUserName': req.apibody['xml']['FromUserName'][0],
+								'FromUserName': req.apibody['xml']['ToUserName'][0],
+								'CreateTime': req.apibody['xml']['CreateTime'][0],
+								'MsgType': 'news',
+								'ArticleCount': msgParam.items.length,
+								'Articles': {'item': msgParam.items},
+								'FuncFlag': 1
+							});
+						}
+						else
+						{
+							res.api({
+								'ToUserName': req.apibody['xml']['FromUserName'][0],
+								'FromUserName': req.apibody['xml']['ToUserName'][0],
+								'CreateTime': req.apibody['xml']['CreateTime'][0],
+								'MsgType': msgType,
+								'Content': replyMsg,
+								'FuncFlag': 0
+							});
+						}
 					}
-					else
+					catch (e)
 					{
-						res.api({
-							'ToUserName': req.apibody['xml']['FromUserName'][0],
-							'FromUserName': req.apibody['xml']['ToUserName'][0],
-							'CreateTime': req.apibody['xml']['CreateTime'][0],
-							'MsgType': msgType,
-							'Content': replyMsg,
-							'FuncFlag': 0
-						});
 					}
 				}
 			);
