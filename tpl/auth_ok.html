@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>天津大学微信学号绑定</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+<style type="text/css">
+/* CSS Document */
+body{
+	color:#000;
+	line-height:166.6%; 
+	background:#A8CDF4 url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAgEAAAAAAAD/7gAOQWRvYmUAZAAAAAAB/+wAEUR1Y2t5AAEABAAAAFAAAP/bAEMAAgICAgICAgICAgMCAgIDBAMCAgMEBQQEBAQEBQYFBQUFBQUGBgcHCAcHBgkJCgoJCQwMDAwMDAwMDAwMDAwMDP/bAEMBAwMDBQQFCQYGCQ0LCQsNDw4ODg4PDwwMDAwMDw8MDAwMDAwPDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDP/AABEIAOIABwMBEQACEQEDEQH/xAAWAAEBAQAAAAAAAAAAAAAAAAAFBAn/xAAYEAEBAQEBAAAAAAAAAAAAAAAAE2GREv/EABgBAQEAAwAAAAAAAAAAAAAAAAIBAAcI/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AM2fDopptZNCWzFi+YqRlg0iMhqwnIapSODShWIVS8cCkWjg0i8cCrDEMCkYhgUoZhgUoYhgVYZhgUoYhgUjEMClDEBqmIYFKF44FIvDAqwtHBpQrHApQnHBqk5YFUlLBpKuIr//2Q==) repeat-x;
+	}
+body,input,select,button,textarea{
+	font-family:helvetica,arial,sans-serif;
+	}
+h1,h2,h3,h4,h5,h6,select,input,textarea,button,table{
+	font-size:100%;
+	}
+body,h1,h2,h3,h4,h5,h6,ul,ol,li,form,p,dl,dt,dd,table,th,td,img{
+	margin:0;
+	padding:0;
+	border:0;
+	}
+input,button,textarea,select,img{
+	margin:0;
+	line-height:normal;
+	}
+ul,ol{
+	list-style:none;
+	}
+table{
+	border-collapse:collapse;
+	border-spacing:0;
+	}
+select,input,button,button img{
+	vertical-align:middle;
+	}
+.wrap{ 
+	margin-top:10px;
+	min-height:417px;
+	}
+.top{ 
+	padding:3px 0 0 0; 
+	text-align:center;
+	}
+.login{
+	width:98%;
+	margin:0 auto;
+	background:#fff;
+	border:0 solid transparent; 
+	opacity:0.7; 
+	-webkit-border-radius:5px;
+	-webkit-box-shadow:0 0 5px #000; 
+	}
+label{ 
+	display:block; 
+	padding:0 10px; 
+	height:60px; 
+	line-height:60px; 
+	font-size:16px; 
+	position:relative; 
+	border-bottom:1px solid #ccc;
+	}
+.label-line{ 
+	display:block; 
+	padding:0 10px; 
+	height:10px; 
+	line-height:60px; 
+	font-size:16px; 
+	position:relative; 
+	border-bottom:1px solid #ccc;
+	}
+label:last-child{ 
+	border-bottom:none;
+	}
+input[type='text'],input[type='password']{
+	width:94%;
+	height:30px;
+	margin-left:5px;
+	border-width:thin;
+	}
+.corner-all{
+	border-top-left-radius: 0.3em;
+	border-top-right-radius: 0.3em;
+	border-bottom-left-radius: 0.3em;
+	border-bottom-right-radius: 0.3em;
+	}
+.input-text{
+	line-height:1.4em;
+	font-size:17px;
+	outline-width:0px;
+	outline-style:none;
+	outline-color:invert;
+	background-image:none;
+	}
+.button{ 
+	height:40px; 
+	border:1px solid #3571B0;
+	background:-webkit-gradient(linear, 0 0, 0 100%, from(#73ABE0), to(#4380BF)); 
+	-webkit-border-radius:5px; 
+	width:278px;
+	-webkit-box-shadow:0 0 3px #ccc; 
+	color:#fff; 
+	font-size:16px; 
+	font-weight:700;
+	}
+.btndiv{ 
+	text-align:center; 
+	padding:15px 0;
+	}
+.drop{ 
+	position:absolute; 
+	left:61px; 
+	top:50px; 
+	border:2px solid #eee; 
+	background:#fff; 
+	border:1px solid #b5b5b5; 
+	width:203px; 
+	-webkit-border-radius:5px;
+	max-height:162px; 
+	overflow:auto; 
+	-webkit-box-shadow:0 0 3px #ccc;
+	}
+.drop > div > span{ 
+	display:block; 
+	color:#000; 
+	text-decoration:none; 
+	height:40px; 
+	line-height:40px; 
+	color:#000; 
+	margin:1px; 
+	padding:0 5px; 
+	border-bottom:1px solid #ccc;
+	}
+.drop > div > span.current{ 
+	background:#286fff; 
+	color:#fff; -webkit-border-radius:3px;
+	}
+select{ 
+	background:transparent; 
+	border:none; 
+	margin-left:4px; 
+	width:180px;
+	}
+input,select{ 
+	margin-top:-2px;
+	}
+.cp{ 
+	padding:10px 0; 
+	text-align:center; 
+	font-size:12px;
+	}
+#form_login label.error{
+	width:auto;
+	margin-left:10px;
+	display:inline
+	}
+#savelabel, #forcelabel{
+	width:100px;
+	height:25px;
+	border:0px;
+	line-height:normal;
+	padding:0px 0px;
+	margin:0px 0px;
+	display:inline;
+	}
+</style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="top"><img src="data:image/png;base64,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"></div>
+        <div class="login corner-all" style="padding:10px 0px">
+			<div class="btndiv">
+			<div style="font-weight: bold">登录成功!</div>
+			<div>现在您可以关闭该页面，重新在微信中进行查询操作。</div>
+			<div>我们将默认您今后使用此学号进行查询，如要解除绑定请在微信中输入“解绑”。</div>
+			</div>
+			<div style="height:10px;"></div>
+		</div>
+        <div class="cp">
+            Copyright ? 2013 天津大学
+        </div>
+    </div>
+</body>
+</html>

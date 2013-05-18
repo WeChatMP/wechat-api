@@ -12,6 +12,7 @@ global.hitCount = 0;
 
 global.http = require('http');
 global.rrest = require('rrestjs');
+global.db = require('./helper/db');
 
 global.getUserData = function(openid)
 {
@@ -25,27 +26,18 @@ global.getUserData = function(openid)
 
 global.flushUserData = function()
 {
-	rrest.mongo(function(err, db, release){
-		if (err) return;
-		db.collection('userData', {'safe': true}, function (err, coll){
-			coll.update({'active': 1}, {
-				$set: {'data': global.userData},
-			}, function (){release();});
-		});
+	db.open('userData', function (coll, release){
+		coll.update({'active': 1}, {
+			$set: {'data': global.userData},
+		}, function (){release();});
 	});
 }
 
 global.reloadUserData = function()
 {
-	rrest.mongo(function(err, db, release){
-		if (err) return;
-		db.collection('userData', {'safe': true}, function (err, coll){
-			coll.findOne({'active': 1}, function(err, item){
-				if (!err && item && item.data)
-					global.userData = item.data;
-				release();
-			});
-		});
+	db.getOne('userData', {'active': 1}, function (item){
+		if (item && item.data)
+			global.userData = item.data;
 	});
 }
 
@@ -74,12 +66,9 @@ global.appendCmd = function(cmd)
 
 global.logMsg = function(user, msg, parsed)
 {
-	rrest.mongo(function(err, db, release){
-		if (err) return;
-		db.collection('commandLog', {'safe': true}, function (err, coll){
-			var row = {'time': new Date(), 'user': user, 'msg': msg, 'parsed': parsed};
-			coll.insert(row, function(){release();});
-		});
+	db.open('commandLog', function (coll, release){
+		var row = {'time': new Date(), 'user': user, 'msg': msg, 'parsed': parsed};
+		coll.insert(row, function(){release();});
 	});
 }
 
@@ -140,59 +129,52 @@ global.loadMsg = function()
 {
 	var fs = require('fs');
 	global.msgDefs = {};
-	rrest.mongo(function(err, db, release){
-		if (err)
-		{
-			console.log(err);
-			release();
-			return;
-		}
-		db.collection('msgTemplate', {'safe': true}, function (err, coll){
-			coll.find().toArray(
-				function(err, docs){
-					for (var i in docs)
-					{
-						var obj = docs[i];
-						global.msgDefs[obj.id] = obj.text;
-					}
-					release();
+	db.open('msgTemplate', function (coll, release){
+		coll.find().toArray(
+			function(err, docs){
+				for (var i in docs)
+				{
+					var obj = docs[i];
+					global.msgDefs[obj.id] = obj.text;
 				}
-			);
-		});
+				release();
+			}
+		);
 	});
 	console.log('msg loaded');
 }
 
 global.loadCommand = function(callback)
 {
+	var pluginDir = './command/';
 	var fs = require('fs');
 	global.cmdDefs = [];
-	rrest.mongo(function(err, db, release){
-		if (err)
+	global.purgeProc = {};
+	var dirList = fs.readdirSync(pluginDir);
+	dirList.forEach(function(item){
+		if(fs.statSync(pluginDir + '/' + item).isFile())
 		{
-			console.log(err);
-			release();
-			return;
+			delete require.cache[pluginDir + '/' + item.replace(/\.js/g, '')];
+			fs.unlinkSync(pluginDir + '/' + item);
 		}
-		console.log('mongo db connected');
-		db.collection('commandSchema', {'safe': true}, function (err, coll){
-			coll.find({'chain': {$gte: 0}}).sort({'chain': 1}).toArray(
-				function(err, docs){
-					for (var i in docs)
-					{
-						var obj = docs[i];
-						fs.writeFileSync('./command/' + obj.key + '.js', (obj.header ? obj.header : '') + 'module.exports.parser = function(msg){' + obj.parser + '};module.exports.handler = function(data, callback){' + obj.handler + '};');
-						delete require.cache['./command/' + obj.key];
-						var mod = require('./command/' + obj.key);
-						var cmd = {'key': obj.key, 'name': obj.name, 'desc': obj.desc, 'param': obj.param, 'parse': mod.parser, 'handle': mod.handler};
-						global.appendCmd(cmd);
-						console.log('command stub: ' + cmd.key + ' (' + cmd.name + ')');
-					}
-					release();
-					callback();
+	});
+	db.open('commandSchema', function (coll, release){
+		coll.find({'chain': {$gte: 0}}).sort({'chain': 1}).toArray(
+			function(err, docs){
+				for (var i in docs)
+				{
+					var obj = docs[i];
+					var keyName = obj.key + '-' + Math.random();
+					fs.writeFileSync(pluginDir + keyName + '.js', (obj.header ? obj.header : '') + '\r\n\r\nmodule.exports.parser = function(msg){\r\n' + obj.parser + '\r\n};\r\n\r\nmodule.exports.handler = function(data, callback){\r\n' + obj.handler + '\r\n};\r\n');
+					var mod = require(pluginDir + keyName);
+					var cmd = {'key': obj.key, 'name': obj.name, 'desc': obj.desc, 'param': obj.param, 'parse': mod.parser, 'handle': mod.handler};
+					global.appendCmd(cmd);
+					console.log('command init: ' + keyName + '(' + cmd.name + ')');
 				}
-			);
-		});
+				release();
+				callback();
+			}
+		);
 	});
 	console.log('command loaded');
 }
@@ -202,14 +184,32 @@ global.ready = function()
 	global.http = require('http');
 	global.server = global.http.createServer(
 		function (req, res){
+			var controller;
 			global.requestCount ++;
-			try{
-				require('./controller/' + req.path[0])[req.path[1]](req, res);
+			
+			try
+			{
+				controller = require('./controller/' + req.path[0]);
 			}
 			catch(err)
 			{
 				res.statusCode = 404;
 				res.send('no such method');
+			}
+			
+			try
+			{
+				controller[req.path[1]](req, res);
+			}
+			catch(err)
+			{
+				console.log('error dump at ');
+				console.log(new Date());
+				console.log(req.path);
+				console.log(req.apibody);
+				console.log(err);
+				/*res.statusCode = 500;
+				res.send('internal error');*/
 			}
 		}).listen(rrest.config.listenPort);
 	console.log('http server up');
